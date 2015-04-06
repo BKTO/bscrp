@@ -6,11 +6,35 @@ def getDomainFromUrlString(url):
     url_parsed = urlparse(url)
     return url_parsed.scheme + "://" + url_parsed.netloc
 
+def isHrefDocument(href):
+    return href[-4:] in [".pdf", ".doc", ".xls", ".xml"]
+
 def isHrefHttp(href):
     return urlparse(href).scheme in ["http", "https", ""]
 
-def isHrefDocument(href):
-    return href[-4:] in [".pdf", ".doc", ".xls", ".xml"]
+def isUrlRelevant(url):
+    return not any(word in url for word in ["about", "ads", "captcha", "condition", "contact", "cookie", "copyright", "log", "privacy", "registrat", "robot", "sign", "term"])
+
+def isEnoughText(text):
+    totalNumberOfChars = len(text)
+    totalNumberOfBlankChars = text.count(" ") + text.count("\n") + text.count("\r")
+    totalNumberOfNonBlankChars = totalNumberOfChars - totalNumberOfBlankChars
+    if totalNumberOfNonBlankChars > 20:
+        return True
+    else:
+        return False
+
+def isJavaScript(inputString):
+    countOfSpecial = inputString.count(";") + inputString.count("=") + inputString.count("var") + inputString.count("{") + inputString.count("}") 
+    print "countOfSpecial is", countOfSpecial
+    numberOfCharacters = len(inputString)
+    print "numberOfCharacters is", numberOfCharacters
+    percentage = countOfSpecial / float(numberOfCharacters)
+    print "percentage of special characters is", percentage
+    if percentage > .01:
+        return True
+    else:
+        return False
 
 #pass in the href and the domain it comes from
 # if there's problems it fixes the href
@@ -35,16 +59,21 @@ def reformHref(domain, href):
         url_string = href_parsed.scheme
 
     url_string += "://"
+    print "url_string is", url_string
 
     if href_parsed.netloc in ["", ".."] or "." not in href_parsed.netloc:
         url_string += domain_parsed.netloc
     else:
         url_string += href_parsed.netloc
 
+    print "url_string is", url_string
+
     if href_parsed.path[:3] == "://":
         url_string += href_parsed[2:]
     else:
         url_string += href_parsed.path
+
+    print "url_string is", url_string
 
     # if everything's blank except the fragment, add that
     if href_parsed.scheme == "" and href_parsed.netloc == "" and href_parsed.path == "" and href_parsed.params == "" and href_parsed.query == "":
