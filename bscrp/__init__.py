@@ -25,7 +25,7 @@ def isEnoughText(text):
         return False
 
 def isJavaScript(inputString):
-    countOfSpecial = inputString.count(";") + inputString.count("=") + inputString.count("var") + inputString.count("{") + inputString.count("}") 
+    countOfSpecial = inputString.count(";") + inputString.count("=") + inputString.count("var") + inputString.count("{") + inputString.count("}") + inputString.count(":") + inputString.count("\"")
     print "countOfSpecial is", countOfSpecial
     numberOfCharacters = len(inputString)
     print "numberOfCharacters is", numberOfCharacters
