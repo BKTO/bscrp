@@ -13,7 +13,7 @@ def isHrefHttp(href):
     return urlparse(href).scheme in ["http", "https", ""]
 
 def isUrlRelevant(url):
-    return not any(word in url for word in ["about", "ads", "captcha", "condition", "contact", "cookie", "copyright", "log", "privacy", "registrat", "robot", "sign", "term"])
+    return not any(word in url for word in ["about", "amazon", "ads", "captcha", "condition", "contact", "cookie", "copyright", "log", "privacy", "registrat", "robot", "sign", "term"])
 
 def isEnoughText(text):
     totalNumberOfChars = len(text)
@@ -25,63 +25,64 @@ def isEnoughText(text):
         return False
 
 def isJavaScript(inputString):
-    countOfSpecial = inputString.count(";") + inputString.count("=") + inputString.count("var") + inputString.count("{") + inputString.count("}") + inputString.count(":") + inputString.count("\"")
-    print "countOfSpecial is", countOfSpecial
     numberOfCharacters = len(inputString)
-    print "numberOfCharacters is", numberOfCharacters
-    percentage = countOfSpecial / float(numberOfCharacters)
-    print "percentage of special characters is", percentage
-    if percentage > .01:
-        return True
-    else:
-        return False
+    if numberOfCharacters != 0:
+        countOfSpecial = inputString.count(";") + inputString.count("=") + inputString.count("var") + inputString.count("{") + inputString.count("}") + inputString.count(":") + inputString.count("\"")
+        #print "countOfSpecial is", countOfSpecial
+        #print "numberOfCharacters is", numberOfCharacters
+        percentage = float(countOfSpecial) / float(numberOfCharacters)
+        #print "percentage of special characters is", percentage
+        if percentage > .01:
+            return True
+    return False
 
 #pass in the href and the domain it comes from
 # if there's problems it fixes the href
 # if not it just returns the href
 def reformHref(domain, href):
-    print "starting reformHref with", domain, "and", href
+#    print "starting reformHref with", domain, "and", href
     domain_parsed = urlparse(domain)
-    print "domain_parsed is", domain_parsed
+#    print "domain_parsed is", domain_parsed
     href_parsed = urlparse(href)
-    print "href_parsed is", href_parsed
+#    print "href_parsed is", href_parsed
 
     if href_parsed.scheme == "":
-        print "href_parsed.scheme is blank"
+#        print "href_parsed.scheme is blank"
         if domain_parsed.scheme == "":
-            print "domain_parsed.scheme is blank, so setting to http"
+#            print "domain_parsed.scheme is blank, so setting to http"
             url_string = "http"
         else:
-            print "domain_parsed.scheme is not blank"
+#            print "domain_parsed.scheme is not blank"
             url_string = domain_parsed.scheme
     else:
-        print "href_parsed.scheme is not blank"
+#        print "href_parsed.scheme is not blank"
         url_string = href_parsed.scheme
 
     url_string += "://"
-    print "url_string is", url_string
+#    print "url_string is", url_string
 
     if href_parsed.netloc in ["", ".."] or "." not in href_parsed.netloc:
         url_string += domain_parsed.netloc
     else:
         url_string += href_parsed.netloc
 
-    print "url_string is", url_string
+#    print "url_string is", url_string
 
     if href_parsed.path[:3] == "://":
         url_string += href_parsed[2:]
     else:
         url_string += href_parsed.path
 
-    print "url_string is", url_string
+#    print "url_string is", url_string
 
     # if everything's blank except the fragment, add that
     if href_parsed.scheme == "" and href_parsed.netloc == "" and href_parsed.path == "" and href_parsed.params == "" and href_parsed.query == "":
         url_string += "#" + href_parsed.fragment
 
-    print "urlstring is", url_string
+#    print "urlstring is", url_string
     if url_string.count("//") > 1:
-        print "ERRROROROROR "
+#        print "ERRROROROROR "
+        pass
 
     return url_string
 
