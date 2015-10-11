@@ -13,7 +13,7 @@ def isHrefHttp(href):
     return urlparse(href).scheme in ["http", "https", ""]
 
 def isUrlRelevant(url):
-    return not any(word in url for word in ["about", "amazon", "ads", "captcha", "condition", "contact", "cookie", "copyright", "log", "privacy", "registrat", "robot", "sign", "term"])
+    return not any(word in url for word in ["about", "amazon", "ads", "captcha", "condition", "contact", "cookie", "copyright", "wikipedia.org/w/index.php?title=", "log", "privacy", "registrat", "robot", "sign", "term"])
 
 def isEnoughText(text):
     totalNumberOfChars = len(text)
