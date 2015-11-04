@@ -1,3 +1,6 @@
+from bs4.element import Doctype, NavigableString
+from bs4 import BeautifulSoup
+from collections import Counter
 from datetime import datetime
 from urlparse import urlparse
 import random, re
@@ -98,3 +101,50 @@ def getRandomUserAgentString():
     userAgentString = random.choice(listOfUserAgentStrings)
     print "userAgentString is", userAgentString
     return userAgentString
+
+def getTitleFromSoup(soup):
+    soup_title = str(soup.title)
+    if soup_title:
+        return soup_title.replace("<title>","").replace("</title>","").split(" -")[0].strip().split(" |")[0].strip()
+    else:
+        return None
+
+def getMostRepeatedContentFromSoup(soup, test=None, testTagName=None):
+    candidates = []
+    for element in soup.descendants:
+        if not isinstance(element, Doctype) and not isinstance(element, NavigableString):
+            children = list(element.children)
+            number_of_children = len(children)
+            if number_of_children > 5:
+                names = [child.name for child in children]
+                counter = Counter(names)
+                tagName, count = counter.most_common(1)[0]
+                if tagName and count >= 5 and testTagName(tagName) if testTagName else True:
+                    freq = float(count) / float(number_of_children)
+                    if freq > 0.5:
+                        if test(element):
+                            candidate = {}
+                            candidate['element'] = element
+                            candidate['children'] = [child for child in children if child.name == tagName]
+                            candidates.append(candidate)
+    number_of_candidates = len(candidates)
+    if number_of_candidates == 0:
+        pass
+    elif number_of_candidates == 1:
+        return list(candidates[0]['children'])
+    elif number_of_candidates > 1:
+        print "candidates are", len(candidates)
+
+# basically filter out the most repeated content by text length
+# because a post is highly unlikely to consist of less than 100 characters!
+def getPostsFromSoup(soup):
+    test = lambda x: len(x.text) > 100
+
+    # and posts are highly unlikely to be grouped as paragraph tags
+    # paragraph tags are more likely to be paragraphs in a post!
+    testTagName = lambda tagName: tagName != "p"
+
+    return getMostRepeatedContentFromSoup(soup, test=test, testTagName=testTagName)
+
+def getPostsFromText(text):
+    return getPostsFromSoup(BeautifulSoup(text,'html.parser'))
