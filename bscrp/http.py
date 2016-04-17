@@ -93,9 +93,11 @@ def getAnonymouslyViaCurl(url, userAgentString="", ua="", number_of_tries=1, use
                 text = ""
 
         try:
+            print "about to write"
             with open(path_to_cache_of_url,"wb") as f:
                 f.write(text.encode("utf-8"))
                 print "wrote ", url, "to ", path_to_cache_of_url
+            print "wrote"
         except Exception as e: 
             print e
 
