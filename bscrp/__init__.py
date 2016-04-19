@@ -637,4 +637,3 @@ def getUrlsFromSoup(soup, domain, selectors_for_post=None):
 def getUrlsFromText(text, domain):
     open("/tmp/text.html","wb").write(text.encode("utf-8"))
     return getUrlsFromSoup(BeautifulSoup(text, "html5lib"), domain)
->>>>>>> 1d96b5422f5b21a9816d71eaa6c0198a7ac7fbdb
