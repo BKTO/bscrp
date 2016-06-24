@@ -11,6 +11,15 @@ from os.path import dirname, realpath, isfile
 
 path_to_cache = dirname(realpath(__file__)) + "/cache"
 
+def getTextContentViaSelenium(url):
+    display = Display(visible=0, size=(1024, 768)).start()
+    driver = webdriver.Firefox()
+    driver.get(url)
+    textContent = driver.execute_script("return document.documentElement.textContent")
+    driver.quit()
+    display.stop()
+    return textContent
+
 def getPageViaDriver(driver):
     try: driver.get(url)
     except: pass
