@@ -1,9 +1,13 @@
-#<meta content="0; url=/ku" http-equiv="refresh"/>
+from sys import version_info
+python_version = version_info.major
 
 from bs4 import BeautifulSoup
 from pyvirtualdisplay import Display
 from re import search
-from urlparse import urlparse
+if python_version == 2:
+    from urlparse import urlparse
+elif python_version == 3:
+    from urllib.parse import urlparse
 from selenium.webdriver import Firefox, FirefoxProfile
 from selenium import webdriver
 from subprocess import check_output
@@ -78,7 +82,7 @@ def getAnonymouslyViaCurl(url, userAgentString="", ua="", number_of_tries=1, use
             path_to_cache_of_url = path_to_cache + "/" + url.__hash__().__str__()
 
         if use_cache and isfile(path_to_cache_of_url):
-            print "webpage of", url," in cache so get that instead of making a call"
+            #print "webpage of", url," in cache so get that instead of making a call"
             with open(path_to_cache_of_url) as f:
                 text = f.read()
 
@@ -88,7 +92,7 @@ def getAnonymouslyViaCurl(url, userAgentString="", ua="", number_of_tries=1, use
                     text = check_output(['curl','--connect-timeout','15','--location','--max-time',str(max_time),'--user-agent',"'"+userAgentString+"'",'--socks5-hostname','127.0.0.1:9050','--url',url])
                     break
                 except Exception as e:
-                    print e
+                    print(e)
 
         if not text:
             return {'html': '', 'final_url': url}
@@ -102,13 +106,13 @@ def getAnonymouslyViaCurl(url, userAgentString="", ua="", number_of_tries=1, use
                 text = ""
 
         try:
-            print "about to write"
+            #print "about to write"
             with open(path_to_cache_of_url,"wb") as f:
                 f.write(text.encode("utf-8"))
-                print "wrote ", url, "to ", path_to_cache_of_url
-            print "wrote"
+                #print "wrote ", url, "to ", path_to_cache_of_url
+            #print "wrote"
         except Exception as e: 
-            print e
+            print(e)
 
 
         try: soup = BeautifulSoup(text, 'html.parser')
@@ -148,7 +152,7 @@ def postAnonymouslyViaCurl(url, userAgentString="", ua="", params={}, number_of_
 
         path_to_cache_of_url = path_to_cache + "/" + url.replace("/","_").replace(":","_").replace("?","_").replace("/","_").replace(".","_") + data.replace("&","_").replace("=","_").replace(" ","_")
         if use_cache and isfile(path_to_cache_of_url):
-            print "webpage of", url," in cache so get that instead of making a call"
+            #print "webpage of", url," in cache so get that instead of making a call"
             with open(path_to_cache_of_url) as f:
                 text = f.read()
 
@@ -158,7 +162,7 @@ def postAnonymouslyViaCurl(url, userAgentString="", ua="", params={}, number_of_
                     text = check_output(['curl','--connect-timeout','15','--location','--max-time','30','--user-agent',"'"+userAgentString+"'",'--socks5-hostname','127.0.0.1:9050','--url',url,'--data',data])
                     break
                 except Exception as e:
-                    print e
+                    print(e)
         
         try:
             text = text.decode('utf-8')
@@ -167,12 +171,12 @@ def postAnonymouslyViaCurl(url, userAgentString="", ua="", params={}, number_of_
 
         with open(path_to_cache_of_url,"wb") as f:
             f.write(text.encode("utf-8"))
-            print "wrote ", url, "to ", path_to_cache_of_url
+            #print "wrote ", url, "to ", path_to_cache_of_url
 
         soup = BeautifulSoup(text, 'html.parser')
         element = soup.find('meta', attrs={'http-equiv': 'refresh'})
         if element:
-            print "element is", element
+            #print "element is", element
             newurl = search("(?<=url=)[^;]*",element['content']).group(0)
             if not newurl.startswith("http"):
                 url_parsed = urlparse(url)

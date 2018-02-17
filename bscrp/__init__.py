@@ -1,16 +1,25 @@
+from sys import version_info
+python_version = version_info.major
+
 import random, re
 from bs4.element import Comment, Doctype, NavigableString, Tag
 from bs4 import BeautifulSoup
 from collections import Counter
 from datetime import datetime
 from numpy import mean, median, std
-from urlparse import urlparse
+if python_version == 2:
+    from urlparse import urlparse
+elif python_version == 3:
+    from urllib.parse import urlparse
 from re import IGNORECASE, match, MULTILINE, sub, UNICODE
 flags = IGNORECASE|MULTILINE|UNICODE
 
 from error_page import *
 from headers import *
-from http import *
+try:
+    from http import *
+except Exception as e:
+    print("failed to import http module.  this is non critical but you will not be able to use http methods")
 from statements import *
 
 def getDomainFromUrlString(url):
@@ -223,7 +232,7 @@ GET_POST_ELEMENTS_JAVASCRIPT = """
 
 # basically sees if something repeats more than 5 times
 def getPostsFromSoup(soup, selector_for_posts=None):
-    print "starting getPostsFromSoup with ", type(soup), str(soup)[:200]
+    #print "starting getPostsFromSoup with ", type(soup), str(soup)[:200]
 
     # see if any posts that match selector_for_posts exist
     # if true, just return them and don't bother with algorithmic finding
@@ -612,9 +621,9 @@ def guessLanguageOfUrl(url):
 # different than getting hrefs or posts, because this way get full absolute url because have to pass in domain
 def getUrlsFromSoup(soup, domain, selectors_for_post=None):
     domain = domain.lower()
-    print "\nstarting getUrlsFromSoup with", type(soup), "and", domain
+    #print "\nstarting getUrlsFromSoup with", type(soup), "and", domain
     posts = getPostsFromSoup(soup, selectors_for_post)
-    print "\tposts from getPostsFromSoup = ", len(posts or [])
+    #print "\tposts from getPostsFromSoup = ", len(posts or [])
     if posts:
         hrefs = []
         for post in posts:
