@@ -14,13 +14,13 @@ elif python_version == 3:
 from re import IGNORECASE, match, MULTILINE, sub, UNICODE
 flags = IGNORECASE|MULTILINE|UNICODE
 
-from error_page import *
-from headers import *
+from .error_page import *
+from .headers import *
 try:
-    from http import *
+    from .http import *
 except Exception as e:
     print("failed to import http module.  this is non critical but you will not be able to use http methods")
-from statements import *
+from .statements import *
 
 def getDomainFromUrlString(url):
     url_parsed = urlparse(url)
